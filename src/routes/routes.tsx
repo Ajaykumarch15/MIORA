@@ -18,8 +18,8 @@ const ThoughtTimelinePage = lazy(() => import("../pages/ThoughtTimelinePage"));
 const SettingsPage = lazy(() => import("../pages/SettingsPage"));
 
 export const routes: RouteObject[] = [
-  { path: "/", element: <Navigate to="/people" replace /> },
-  { path: "/welcome", element: <WelcomePage /> },
+  { path: "/", element: <WelcomePage /> },
+  { path: "/welcome", element: <Navigate to="/" replace /> },
   { path: "/login", element: <LoginPage /> },
   { path: "/register", element: <RegisterPage /> },
 
@@ -43,5 +43,5 @@ export const routes: RouteObject[] = [
     ],
   },
 
-  { path: "*", element: <Navigate to="/people" replace /> },
+  { path: "*", element: <Navigate to="/" replace /> },
 ];

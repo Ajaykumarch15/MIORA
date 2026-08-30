@@ -5,14 +5,6 @@
   --font-sans: "Inter", sans-serif;
   --font-display: "Playfair Display", serif;
 
-  /* Frost palette */
-  --color-miora-diamond: #E3EDF5;
-  --color-miora-blue: #B0D6E2;
-  --color-miora-astral: #203648;
-  --color-miora-meditative: #95A7B3;
-  --color-miora-turbulent: #546C7B;
-
-  /* Legacy palette (keep for app internals) */
   --color-miora-charcoal: #2B313C;
   --color-miora-mist: #4A5C71;
   --color-miora-steel: #7088A6;
