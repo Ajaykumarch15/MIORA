@@ -1,0 +1,31 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@500;600&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", sans-serif;
+  --font-display: "Playfair Display", serif;
+
+  --color-miora-charcoal: #2B313C;
+  --color-miora-mist: #4A5C71;
+  --color-miora-steel: #7088A6;
+  --color-miora-snow: #DFE7EE;
+  --color-miora-frost: #F2F4F7;
+  --color-miora-paper: #FAFAF8;
+  --color-miora-accent: #FF5A36;
+  --color-miora-accent-soft: #FFE7E0;
+  --color-miora-line: #E7E9ED;
+  --color-miora-muted: #6F7782;
+  --color-miora-success: #3C7D67;
+  --color-miora-danger: #D9544D;
+
+  --radius-miora-sm: 12px;
+  --radius-miora-md: 18px;
+  --radius-miora-lg: 24px;
+  --radius-miora-xl: 32px;
+}
+
+@layer base {
+  body {
+    @apply bg-miora-paper text-miora-charcoal font-sans antialiased;
+  }
+}

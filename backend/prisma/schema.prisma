@@ -1,0 +1,92 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ─── Users ──────────────────────────────────────────────
+// Prepared for future authentication.
+// For now, a single development user is used.
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  name         String?
+  passwordHash String   @map("password_hash")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  people    Person[]
+  settings  Settings?
+
+  @@map("users")
+}
+
+// ─── People ─────────────────────────────────────────────
+
+model Person {
+  id                   String    @id @default(cuid())
+  userId               String    @map("user_id")
+  name                 String
+  nickname             String?
+  createdAt            DateTime  @default(now()) @map("created_at")
+  archivedAt           DateTime? @map("archived_at")
+  deletionRequestedAt  DateTime? @map("deletion_requested_at")
+  deletionScheduledFor DateTime? @map("deletion_scheduled_for")
+
+  user           User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  remembrances   Remembrance[]
+  contexts       Context[]
+
+  @@index([userId])
+  @@map("people")
+}
+
+// ─── Remembrances ───────────────────────────────────────
+
+model Remembrance {
+  id           String   @id @default(cuid())
+  personId     String   @map("person_id")
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  person   Person    @relation(fields: [personId], references: [id], onDelete: Cascade)
+  contexts Context[]
+
+  @@index([personId])
+  @@map("remembrances")
+}
+
+// ─── Contexts ───────────────────────────────────────────
+
+model Context {
+  id              String   @id @default(cuid())
+  remembranceId   String   @map("remembrance_id")
+  personId        String   @map("person_id")
+  type            String   // "memory" | "conversation" | "feeling" | "place"
+  content         String
+  createdAt       DateTime @default(now()) @map("created_at")
+
+  remembrance Remembrance @relation(fields: [remembranceId], references: [id], onDelete: Cascade)
+  person      Person      @relation(fields: [personId], references: [id], onDelete: Cascade)
+
+  @@index([remembranceId])
+  @@index([personId])
+  @@map("contexts")
+}
+
+// ─── Settings ───────────────────────────────────────────
+
+model Settings {
+  id               String   @id @default(cuid())
+  userId           String   @unique @map("user_id")
+  thoughtCooldown  String   @default("5m") @map("thought_cooldown")
+  createdAt        DateTime @default(now()) @map("created_at")
+  updatedAt        DateTime @updatedAt @map("updated_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("settings")
+}
