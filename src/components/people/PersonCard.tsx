@@ -1,8 +1,8 @@
 import { useNavigate } from "react-router-dom";
-import { Heart } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 import PersonAvatar from "./PersonAvatar";
 import { formatRelativeDate } from "../../lib/dateUtils";
-import type { Person } from "../../data/mockPeople";
+import type { Person } from "../../types";
 
 interface PersonCardProps {
   person: Person;
@@ -15,36 +15,34 @@ export default function PersonCard({ person }: PersonCardProps) {
   return (
     <button
       onClick={() => navigate(`/people/${person.id}`)}
-      className="w-full flex items-center gap-4 px-1 py-3.5 text-left transition-colors hover:bg-miora-frost/60 active:bg-miora-frost rounded-2xl focus:outline-none focus-visible:ring-2 focus-visible:ring-miora-steel/30 focus-visible:ring-offset-2 focus-visible:ring-offset-miora-paper"
+      className="group w-full text-left bg-white rounded-2xl p-4 border border-miora-blue/20 hover:border-miora-blue/40 hover:shadow-md hover:shadow-miora-astral/5 transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-miora-turbulent/30 focus-visible:ring-offset-2"
     >
-      <PersonAvatar name={person.name} />
-
-      <div className="flex-1 min-w-0 py-0.5">
-        <div className="flex items-baseline gap-2 min-w-0">
-          <span className="text-[15px] font-semibold text-miora-charcoal leading-snug truncate">
-            {person.name}
-          </span>
-          {person.nickname && (
-            <span className="text-[13px] text-miora-muted/70 italic shrink-0">
-              &ldquo;{person.nickname}&rdquo;
-            </span>
-          )}
-        </div>
-        <p className="text-xs text-miora-muted/60 mt-1 leading-relaxed">
-          {relativeDate ?? "Never remembered"}
-        </p>
+      <div className="flex items-center justify-between mb-3">
+        <PersonAvatar name={person.name} size="md" />
+        <ChevronRight
+          size={16}
+          className="text-miora-meditative/40 group-hover:text-miora-turbulent transition-colors"
+          strokeWidth={1.5}
+        />
       </div>
 
-      <div className="flex items-center gap-1.5 shrink-0 pr-1">
-        <Heart
-          size={14}
-          className="text-miora-accent"
-          fill="currentColor"
-          strokeWidth={0}
-        />
-        <span className="text-[13px] font-medium text-miora-muted tabular-nums">
-          {person.remembranceCount}
-        </span>
+      <h3 className="font-display text-base font-medium text-miora-astral leading-snug">
+        {person.name}
+      </h3>
+
+      {person.nickname && (
+        <p className="text-xs text-miora-meditative italic mt-0.5">
+          &ldquo;{person.nickname}&rdquo;
+        </p>
+      )}
+
+      <div className="mt-3 pt-3 border-t border-miora-blue/15">
+        <p className="text-xs text-miora-turbulent font-medium tabular-nums">
+          {person.remembranceCount} {person.remembranceCount === 1 ? "memory" : "memories"}
+        </p>
+        <p className="text-[11px] text-miora-meditative mt-0.5">
+          {relativeDate ? `Last remembered ${relativeDate}` : "Not yet remembered"}
+        </p>
       </div>
     </button>
   );

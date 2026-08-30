@@ -1,8 +1,8 @@
 import { useState, type FormEvent } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import TopBar from "../components/layout/TopBar";
-import PrimaryButton from "../components/ui/PrimaryButton";
 import { useAuth } from "../auth/AuthProvider";
+import AuthLayout from "../components/auth/AuthLayout";
+import FormInput from "../components/auth/FormInput";
 
 export default function RegisterPage() {
   const navigate = useNavigate();
@@ -10,11 +10,18 @@ export default function RegisterPage() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [saving, setSaving] = useState(false);
+
+  const isValid =
+    name.trim().length > 0 &&
+    email.includes("@") &&
+    password.length >= 6 &&
+    password === confirmPassword;
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
-    if (saving) return;
+    if (saving || !isValid) return;
     setSaving(true);
     try {
       await register(name.trim(), email.trim(), password);
@@ -24,98 +31,107 @@ export default function RegisterPage() {
     }
   }
 
-  const isValid = name.trim().length > 0 && email.includes("@") && password.length >= 6;
-
   return (
-    <div className="flex flex-col min-h-dvh">
-      <TopBar title="Create Account" showBack />
-      <div className="flex-1 flex flex-col px-6 pt-6 pb-6">
-        <p className="text-miora-charcoal text-[15px] font-medium mb-8 leading-relaxed">
-          Begin your MIORA.
+    <AuthLayout
+      heading="Keep what matters close."
+      supportingText="Create your own quiet place for the people and memories you want to remember."
+    >
+      <div>
+        <h1 className="font-display text-2xl font-medium text-miora-charcoal leading-snug">
+          Create your quiet place.
+        </h1>
+        <p className="mt-2 text-sm text-miora-muted">
+          A space for the people and memories you want to keep close.
         </p>
-
-        {error && (
-          <div className="mb-4 px-4 py-3 rounded-xl bg-red-50 border border-red-200">
-            <p className="text-sm text-red-700">{error}</p>
-          </div>
-        )}
-
-        <form onSubmit={handleSubmit} className="flex-1 flex flex-col">
-          <div className="flex flex-col gap-6">
-            <div>
-              <label
-                htmlFor="name"
-                className="block text-[13px] font-medium text-miora-muted mb-2.5"
-              >
-                Name
-              </label>
-              <input
-                id="name"
-                type="text"
-                value={name}
-                onChange={(e) => { setName(e.target.value); clearError(); }}
-                placeholder="Your name"
-                autoFocus
-                required
-                maxLength={100}
-                className="w-full h-12 px-4 rounded-xl bg-miora-frost border border-miora-line/70 text-miora-charcoal text-[15px] placeholder:text-miora-muted/40 focus:outline-none focus:border-miora-steel/60 focus:bg-white transition-colors"
-              />
-            </div>
-
-            <div>
-              <label
-                htmlFor="email"
-                className="block text-[13px] font-medium text-miora-muted mb-2.5"
-              >
-                Email
-              </label>
-              <input
-                id="email"
-                type="email"
-                value={email}
-                onChange={(e) => { setEmail(e.target.value); clearError(); }}
-                placeholder="your@email.com"
-                required
-                className="w-full h-12 px-4 rounded-xl bg-miora-frost border border-miora-line/70 text-miora-charcoal text-[15px] placeholder:text-miora-muted/40 focus:outline-none focus:border-miora-steel/60 focus:bg-white transition-colors"
-              />
-            </div>
-
-            <div>
-              <label
-                htmlFor="password"
-                className="block text-[13px] font-medium text-miora-muted mb-2.5"
-              >
-                Password
-              </label>
-              <input
-                id="password"
-                type="password"
-                value={password}
-                onChange={(e) => { setPassword(e.target.value); clearError(); }}
-                placeholder="At least 6 characters"
-                required
-                minLength={6}
-                className="w-full h-12 px-4 rounded-xl bg-miora-frost border border-miora-line/70 text-miora-charcoal text-[15px] placeholder:text-miora-muted/40 focus:outline-none focus:border-miora-steel/60 focus:bg-white transition-colors"
-              />
-            </div>
-          </div>
-
-          <div className="mt-auto pt-8">
-            <PrimaryButton type="submit" fullWidth disabled={!isValid} loading={saving}>
-              Create Account
-            </PrimaryButton>
-          </div>
-        </form>
-
-        <div className="mt-6 text-center">
-          <Link
-            to="/login"
-            className="text-sm text-miora-muted hover:text-miora-charcoal transition-colors"
-          >
-            Already have an account? <span className="font-medium">Sign in</span>
-          </Link>
-        </div>
       </div>
-    </div>
+
+      {error && (
+        <div className="mt-6 px-4 py-3 rounded-xl bg-red-50 border border-red-200">
+          <p className="text-sm text-red-700">{error}</p>
+        </div>
+      )}
+
+      <form onSubmit={handleSubmit} className="mt-8 flex flex-col gap-5">
+        <FormInput
+          id="name"
+          label="Full name"
+          type="text"
+          value={name}
+          onChange={(e) => {
+            setName(e.target.value);
+            clearError();
+          }}
+          placeholder="Your name"
+          autoFocus
+          required
+          maxLength={100}
+        />
+
+        <FormInput
+          id="email"
+          label="Email"
+          type="email"
+          value={email}
+          onChange={(e) => {
+            setEmail(e.target.value);
+            clearError();
+          }}
+          placeholder="your@email.com"
+          required
+        />
+
+        <FormInput
+          id="password"
+          label="Password"
+          type="password"
+          value={password}
+          onChange={(e) => {
+            setPassword(e.target.value);
+            clearError();
+          }}
+          placeholder="At least 6 characters"
+          required
+          minLength={6}
+        />
+
+        <FormInput
+          id="confirmPassword"
+          label="Confirm password"
+          type="password"
+          value={confirmPassword}
+          onChange={(e) => {
+            setConfirmPassword(e.target.value);
+            clearError();
+          }}
+          placeholder="Re-enter your password"
+          required
+          minLength={6}
+        />
+
+        <div className="mt-2">
+          <button
+            type="submit"
+            disabled={!isValid || saving}
+            className="w-full h-12 rounded-full bg-miora-astral text-miora-diamond font-medium text-[15px] transition-all hover:bg-miora-turbulent active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100"
+          >
+            {saving ? (
+              <span className="inline-block w-5 h-5 border-2 border-miora-diamond/30 border-t-miora-diamond rounded-full animate-spin" />
+            ) : (
+              "Create account"
+            )}
+          </button>
+        </div>
+      </form>
+
+      <p className="mt-8 text-center text-sm text-miora-muted">
+        Already have an account?{" "}
+        <Link
+          to="/login"
+          className="font-medium text-miora-charcoal hover:text-miora-astral transition-colors"
+        >
+          Sign in
+        </Link>
+      </p>
+    </AuthLayout>
   );
 }

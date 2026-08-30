@@ -1,47 +1,76 @@
-import { Link } from "react-router-dom";
-import { Plus, ChevronRight } from "lucide-react";
-import TopBar from "../components/layout/TopBar";
-import PersonList from "../components/people/PersonList";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useMiora } from "../context/MioraContext";
 import { sortPeopleByRecency } from "../lib/dateUtils";
+import PersonCard from "../components/people/PersonCard";
+import AddPersonCard from "../components/people/AddPersonCard";
+import PeopleEmptyState from "../components/people/PeopleEmptyState";
+import SearchInput from "../components/ui/SearchInput";
 
 export default function PeoplePage() {
-  const { getActivePeople, getArchivedPeople } = useMiora();
+  const navigate = useNavigate();
+  const { getActivePeople } = useMiora();
   const sortedPeople = sortPeopleByRecency(getActivePeople());
-  const archivedCount = getArchivedPeople().length;
+  const [search, setSearch] = useState("");
+
+  const filteredPeople = search
+    ? sortedPeople.filter((p) =>
+        p.name.toLowerCase().includes(search.toLowerCase())
+      )
+    : sortedPeople;
+
+  const hasPeople = sortedPeople.length > 0;
 
   return (
-    <div>
-      <TopBar
-        title="People"
-        rightAction={
-          <Link
-            to="/people/new"
-            className="w-9 h-9 rounded-full bg-miora-charcoal/90 text-miora-paper flex items-center justify-center transition-all hover:bg-miora-charcoal active:scale-95"
-            aria-label="Add person"
-          >
-            <Plus size={18} strokeWidth={2} />
-          </Link>
-        }
-      />
-      <div className="pt-1 px-1">
-        <PersonList people={sortedPeople} />
+    <div className="min-h-dvh bg-miora-diamond/50">
+      <div className="mx-auto max-w-[1280px] px-8 lg:px-12 py-10 lg:py-14">
+        {/* Header */}
+        <div className="flex items-start justify-between gap-6 mb-8 lg:mb-10">
+          <div>
+            <h1 className="font-display text-3xl sm:text-4xl lg:text-[40px] font-medium text-miora-astral leading-tight tracking-tight">
+              People
+            </h1>
+            <p className="mt-2 text-[15px] text-miora-turbulent">
+              The people you want to keep close.
+            </p>
+          </div>
 
-        {archivedCount > 0 && (
-          <Link
-            to="/archived"
-            className="flex items-center justify-between px-4 py-3.5 mt-2 text-left transition-colors hover:bg-miora-frost/60 rounded-2xl"
-          >
-            <span className="text-[14px] text-miora-muted">
-              Archived
-            </span>
-            <div className="flex items-center gap-1.5">
-              <span className="text-[13px] text-miora-muted/60 tabular-nums">
-                {archivedCount}
-              </span>
-              <ChevronRight size={16} className="text-miora-muted/40" strokeWidth={1.5} />
+          {hasPeople && (
+            <button
+              onClick={() => navigate("/people/new")}
+              className="shrink-0 inline-flex items-center gap-2 h-11 px-6 rounded-full bg-miora-astral text-miora-diamond font-medium text-sm transition-all hover:bg-miora-turbulent active:scale-[0.98]"
+            >
+              <span className="text-lg leading-none">+</span>
+              Add someone
+            </button>
+          )}
+        </div>
+
+        {!hasPeople ? (
+          <PeopleEmptyState onAdd={() => navigate("/people/new")} />
+        ) : (
+          <>
+            {/* Search */}
+            <div className="mb-8">
+              <SearchInput value={search} onChange={setSearch} />
             </div>
-          </Link>
+
+            {/* Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+              {filteredPeople.map((person) => (
+                <PersonCard key={person.id} person={person} />
+              ))}
+              <AddPersonCard onClick={() => navigate("/people/new")} />
+            </div>
+
+            {filteredPeople.length === 0 && search && (
+              <div className="text-center py-16">
+                <p className="text-sm text-miora-meditative">
+                  No people matching &ldquo;{search}&rdquo;
+                </p>
+              </div>
+            )}
+          </>
         )}
       </div>
     </div>
