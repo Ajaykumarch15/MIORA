@@ -8,7 +8,12 @@ interface RemembranceResponse {
   contexts: {
     id: string;
     type: string;
+    title: string | null;
     content: string;
+    photoUrl: string | null;
+    memoryDate: string | null;
+    location: string | null;
+    whyMatters: string | null;
     createdAt: string;
   }[];
 }
@@ -41,7 +46,12 @@ interface ContextResponse {
   id: string;
   remembranceId: string;
   type: string;
+  title: string | null;
   content: string;
+  photoUrl: string | null;
+  memoryDate: string | null;
+  location: string | null;
+  whyMatters: string | null;
   createdAt: string;
 }
 
@@ -50,9 +60,25 @@ function mapContext(c: ContextResponse): RemembranceContext {
     id: c.id,
     remembranceId: c.remembranceId,
     type: c.type as RemembranceContext["type"],
+    title: c.title || undefined,
     content: c.content,
+    photoUrl: c.photoUrl || undefined,
+    memoryDate: c.memoryDate || undefined,
+    location: c.location || undefined,
+    whyMatters: c.whyMatters || undefined,
     createdAt: c.createdAt,
   };
+}
+
+interface CreateContextData {
+  remembranceId: string;
+  type: string;
+  content: string;
+  title?: string;
+  photoUrl?: string;
+  memoryDate?: string;
+  location?: string;
+  whyMatters?: string;
 }
 
 export const contextsApi = {
@@ -65,14 +91,31 @@ export const contextsApi = {
 
   create: async (
     personId: string,
-    remembranceId: string,
-    type: string,
-    content: string,
+    data: CreateContextData,
   ): Promise<RemembranceContext> => {
     const item = await api.post<ContextResponse>(
       `/people/${personId}/contexts`,
-      { remembranceId, type, content },
+      data,
     );
+    return mapContext(item);
+  },
+
+  update: async (
+    id: string,
+    data: Partial<CreateContextData>,
+  ): Promise<RemembranceContext> => {
+    const item = await api.patch<ContextResponse>(`/contexts/${id}`, data);
+    return mapContext(item);
+  },
+
+  delete: async (id: string): Promise<void> => {
+    await api.delete(`/contexts/${id}`);
+  },
+
+  uploadPhoto: async (id: string, file: File): Promise<RemembranceContext> => {
+    const formData = new FormData();
+    formData.append("photo", file);
+    const item = await api.post<ContextResponse>(`/contexts/${id}/photo`, formData);
     return mapContext(item);
   },
 };

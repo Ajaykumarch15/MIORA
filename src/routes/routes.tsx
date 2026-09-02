@@ -10,6 +10,8 @@ const PeoplePage = lazy(() => import("../pages/PeoplePage"));
 const AddPersonPage = lazy(() => import("../pages/AddPersonPage"));
 const PersonDetailPage = lazy(() => import("../pages/PersonDetailPage"));
 const RememberPage = lazy(() => import("../pages/RememberPage"));
+const SaveMemoryPage = lazy(() => import("../pages/SaveMemoryPage"));
+const MemoryDetailPage = lazy(() => import("../pages/MemoryDetailPage"));
 const AddContextPage = lazy(() => import("../pages/AddContextPage"));
 const ArchivePersonPage = lazy(() => import("../pages/ArchivePersonPage"));
 const ArchivedPeoplePage = lazy(() => import("../pages/ArchivedPeoplePage"));
@@ -34,6 +36,8 @@ export const routes: RouteObject[] = [
       { path: "/people/new", element: <AddPersonPage /> },
       { path: "/people/:personId", element: <PersonDetailPage /> },
       { path: "/people/:personId/remembrance", element: <RememberPage /> },
+      { path: "/people/:personId/memory", element: <SaveMemoryPage /> },
+      { path: "/people/:personId/memory/:memoryId", element: <MemoryDetailPage /> },
       { path: "/people/:personId/context", element: <AddContextPage /> },
       { path: "/people/:personId/archive", element: <ArchivePersonPage /> },
       { path: "/archived", element: <ArchivedPeoplePage /> },

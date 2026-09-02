@@ -2,6 +2,9 @@ export interface Person {
   id: string;
   name: string;
   nickname?: string;
+  relationship?: string;
+  description?: string;
+  photoUrl?: string;
   remembranceCount: number;
   lastRememberedAt: string | null;
   isArchived: boolean;
@@ -9,6 +12,16 @@ export interface Person {
   deletionRequestedAt: string | null;
   deletionScheduledFor: string | null;
 }
+
+export const RELATIONSHIP_OPTIONS = [
+  "Family",
+  "Friend",
+  "Partner",
+  "Colleague",
+  "Mentor",
+  "Someone special",
+  "Other",
+] as const;
 
 export interface Remembrance {
   id: string;
@@ -22,7 +35,12 @@ export interface RemembranceContext {
   id: string;
   remembranceId: string;
   type: ContextType;
+  title?: string;
   content: string;
+  photoUrl?: string;
+  memoryDate?: string;
+  location?: string;
+  whyMatters?: string;
   createdAt: string;
 }
 

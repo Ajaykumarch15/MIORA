@@ -145,7 +145,7 @@ interface MioraContextValue {
   getTimelineItems: () => TimelineItem[];
 
   // Actions
-  addPerson: (name: string, nickname?: string) => Promise<Person>;
+  addPerson: (data: { name: string; nickname?: string; relationship?: string; description?: string; photoUrl?: string }) => Promise<Person>;
   archivePerson: (personId: string) => Promise<void>;
   restorePerson: (personId: string) => Promise<void>;
   requestDeletion: (personId: string) => Promise<void>;
@@ -156,6 +156,11 @@ interface MioraContextValue {
     remembranceId: string,
     type: ContextType,
     content: string,
+    title?: string,
+    photoUrl?: string,
+    memoryDate?: string,
+    location?: string,
+    whyMatters?: string,
   ) => Promise<RemembranceContext | null>;
   updateSettings: (settings: AppSettings) => Promise<void>;
   refreshData: () => Promise<void>;
@@ -357,8 +362,8 @@ export function MioraProvider({ children }: { children: ReactNode }) {
 
   // Actions
   const addPerson = useCallback(
-    async (name: string, nickname?: string): Promise<Person> => {
-      const person = await peopleApi.create(name, nickname);
+    async (data: { name: string; nickname?: string; relationship?: string; description?: string; photoUrl?: string }): Promise<Person> => {
+      const person = await peopleApi.create(data);
       dispatch({ type: "ADD_PERSON", person });
       return person;
     },
@@ -415,18 +420,27 @@ export function MioraProvider({ children }: { children: ReactNode }) {
       remembranceId: string,
       type: ContextType,
       content: string,
+      title?: string,
+      photoUrl?: string,
+      memoryDate?: string,
+      location?: string,
+      whyMatters?: string,
     ): Promise<RemembranceContext | null> => {
       const remembrance = state.remembrances.find(
         (r) => r.id === remembranceId,
       );
       if (!remembrance) return null;
 
-      const context = await contextsApi.create(
-        remembrance.personId,
+      const context = await contextsApi.create(remembrance.personId, {
         remembranceId,
         type,
         content,
-      );
+        title,
+        photoUrl,
+        memoryDate,
+        location,
+        whyMatters,
+      });
       dispatch({ type: "ADD_CONTEXT", context });
       return context;
     },

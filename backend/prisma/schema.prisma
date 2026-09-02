@@ -32,6 +32,9 @@ model Person {
   userId               String    @map("user_id")
   name                 String
   nickname             String?
+  relationship         String?
+  description          String?
+  photoUrl             String?   @map("photo_url")
   createdAt            DateTime  @default(now()) @map("created_at")
   archivedAt           DateTime? @map("archived_at")
   deletionRequestedAt  DateTime? @map("deletion_requested_at")
@@ -66,7 +69,12 @@ model Context {
   remembranceId   String   @map("remembrance_id")
   personId        String   @map("person_id")
   type            String   // "memory" | "conversation" | "feeling" | "place"
+  title           String?
   content         String
+  photoUrl        String?  @map("photo_url")
+  memoryDate      DateTime? @map("memory_date")
+  location        String?
+  whyMatters      String?  @map("why_matters")
   createdAt       DateTime @default(now()) @map("created_at")
 
   remembrance Remembrance @relation(fields: [remembranceId], references: [id], onDelete: Cascade)
